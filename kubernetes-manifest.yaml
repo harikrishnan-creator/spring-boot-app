@@ -1,0 +1,95 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: springboot-app-pvc
+spec:
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-app
+  labels:
+    app: springboot-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: springboot-app
+
+  template:
+    metadata:
+      labels:
+        app: springboot-app
+
+    spec:
+      containers:
+        - name: springboot-app
+          image: 675344694125.dkr.ecr.us-east-2.amazonaws.com/springboot-app:latest
+          ports:
+            - containerPort: 3006
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          volumeMounts:
+            - name: springboot-app-storage
+              mountPath: /data
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3006
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3006
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          startupProbe:
+            httpGet:
+              path: /
+              port: 3006
+            periodSeconds: 10
+            failureThreshold: 30
+
+      volumes:
+        - name: springboot-app-storage
+          persistentVolumeClaim:
+            claimName: springboot-app-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app-service
+spec:
+  selector:
+    app: springboot-app
+
+  ports:
+    - port: 80
+      targetPort: 3006
+      protocol: TCP
+
+  type: ClusterIP

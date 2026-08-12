@@ -1,0 +1,44 @@
+# ==========================================
+# Build Stage
+# ==========================================
+FROM maven:3.9-eclipse-temurin-25 AS build
+
+WORKDIR /app
+
+# Copy source
+COPY pom.xml .
+COPY src ./src
+
+# Build application
+RUN mvn clean package -DskipTests
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Create non-root user and group
+RUN groupadd -g 10001 devops && \
+    useradd -u 10001 -g devops -M -s /usr/sbin/nologin devops
+
+# ==========================================
+# Runtime Stage
+# ==========================================
+FROM gcr.io/distroless/java25-debian12
+
+WORKDIR /app
+
+# Copy user and group information
+COPY --from=build /etc/passwd /etc/passwd
+COPY --from=build /etc/group /etc/group
+
+# Copy application artifacts
+COPY --from=build --chown=10001:10001 /app/target/*.jar app.jar
+COPY --from=build --chown=10001:10001 /app/logs /app/logs
+
+# Spring Boot default port
+EXPOSE 8080
+
+# Run as non-root user
+USER devops
+
+# JVM startup
+ENTRYPOINT ["java","-jar","app.jar"]
