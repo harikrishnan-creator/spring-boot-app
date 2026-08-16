@@ -1,0 +1,60 @@
+name: Build and Deploy to JFrog + ECR
+
+on:
+  workflow_dispatch:
+#  push:
+#    branches:
+#      - main
+
+jobs:
+  build-deploy:
+    runs-on: [self-hosted]
+
+    steps:
+      # Checkout code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Setup JDK 25 for Maven build
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          java-version: '25'
+          distribution: 'temurin'
+
+      # Build & deploy to JFrog Artifactory
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Deploy to JFrog Artifactory
+        run: mvn deploy
+        env:
+          MAVEN_USERNAME: ${{ secrets.JFROG_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
+
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t -f Docker .
+
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2   # change to your region
+
+      # Login to ECR
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      # Tag & Push image to ECR
+      - name: Push image to ECR
+        run: |
+          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY=my-ecr-repo   # replace with your repo name
+          IMAGE_TAG=${{ github.sha }}
+          docker tag my-app:${{ github.sha }} $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
