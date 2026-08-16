@@ -23,11 +23,8 @@ jobs:
           distribution: 'temurin'
 
       # Build & deploy to JFrog Artifactory
-      - name: Build with Maven
-        run: mvn clean install
-
-      - name: Deploy to JFrog Artifactory
-        run: mvn deploy
+      - name: Build with Maven & Deploy to JFrog Artifactory
+        run: mvn clean deploy -DskipTests -T 1C
         env:
           MAVEN_USERNAME: ${{ secrets.JFROG_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
