@@ -24,7 +24,7 @@ jobs:
 
       # Build and Deploy to JFrog Artifactory
       - name: Build with Maven & Deploy to JFrog Artifactory
-        working-directory: backend
+ #       working-directory: backend
         env:
           MAVEN_USERNAME: ${{ secrets.JFROG_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
