@@ -1,4 +1,4 @@
-name: Build and Deploy to JFrog + ECR
+name: Build and Deploy to JFrog
 
 on:
   workflow_dispatch:
@@ -22,39 +22,14 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
 
-      # Build & deploy to JFrog Artifactory
+      # Build and Deploy to JFrog Artifactory
       - name: Build with Maven & Deploy to JFrog Artifactory
-        run: mvn clean deploy -DskipTests -T 1C
+        working-directory: backend
         env:
           MAVEN_USERNAME: ${{ secrets.JFROG_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
-
-      # Build Docker image
-      - name: Build Docker image
         run: |
-          docker build -t -f Docker .
+          mvn clean deploy \
+          -Dartifactory.username=$MAVEN_USERNAME \
+          -Dartifactory.password=$MAVEN_PASSWORD
 
-      # Configure AWS credentials
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#          aws-region: us-east-2   # change to your region
-          role-to-assume: arn:aws:iam::675344694125:role/GithubOIDC
-          aws-region: us-east-2
-
-          
-      # Login to ECR
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # Tag & Push image to ECR
-      - name: Push image to ECR
-        run: |
-          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY=my-ecr-repo   # replace with your repo name
-          IMAGE_TAG=${{ github.sha }}
-          docker tag my-app:${{ github.sha }} $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
