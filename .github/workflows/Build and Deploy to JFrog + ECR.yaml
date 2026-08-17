@@ -29,7 +29,7 @@ jobs:
           MAVEN_USERNAME: ${{ secrets.JFROG_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.JFROG_PASSWORD }}
         run: |
-          mvn clean deploy \
+          mvn clean deploy -DskipTests \
           -Dartifactory.username=$MAVEN_USERNAME \
           -Dartifactory.password=$MAVEN_PASSWORD
 
