@@ -1,0 +1,19 @@
+# Build Stage
+FROM maven:3.9-eclipse-temurin-25 AS builder
+
+WORKDIR /spring-boot-app
+
+COPY pom.xml .
+COPY src .
+COPY target .
+
+RUN mvn clean package 
+
+# Runtime Stage
+FROM eclipse-temurin:17-jre
+
+WORKDIR /spring-boot-app
+
+COPY --from=builder /spring-boot-app/target/*.jar employee-service.jar
+
+ENTRYPOINT ["java","-jar","employee-service.jar"]
