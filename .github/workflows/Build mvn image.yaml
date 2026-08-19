@@ -49,4 +49,14 @@ jobs:
       - name: Push image to ECR
         run: |
          docker push 675344694125.dkr.ecr.us-east-2.amazonaws.com/employee-app:latest
+
+      - name: Move build to S3      
+        run: |
+          aws s3 cp target/employee-service-1.0.0.jar s3://mvn-artifact/maven-snapshots/
+
+      - name: Cleanup Target Folder     
+        run: |
+          rm -rf target    
+
+          
          
