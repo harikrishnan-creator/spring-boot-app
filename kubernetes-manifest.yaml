@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: springboot-app
-          image: 675344694125.dkr.ecr.us-east-2.amazonaws.com/employee-app:latest
+          image: IMAGE_PLACEHOLDER
           ports:
             - containerPort: 3006
 
@@ -88,8 +88,8 @@ spec:
     app: springboot-app
 
   ports:
-    - port: 80
-      targetPort: 3006
+    - port: 3006
+      targetPort: 9001
       protocol: TCP
 
   type: ClusterIP
