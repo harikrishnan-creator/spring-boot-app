@@ -72,7 +72,7 @@ jobs:
 
       - name: Verify Deployment
         run: |
-          kubectl rollout status deployment/spring-boot-app   
+          kubectl rollout status deployment/springboot-app   
 
           
          
