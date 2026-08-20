@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: springboot-app
-          image: 675344694125.dkr.ecr.us-east-2.amazonaws.com/springboot-app:latest
+          image: 675344694125.dkr.ecr.us-east-2.amazonaws.com/employee-app:latest
           ports:
             - containerPort: 3006
 
