@@ -15,4 +15,6 @@ WORKDIR /spring-boot-app
 
 COPY --from=builder /spring-boot-app/target/*.jar employee-service.jar
 
+EXPOSE 3006
+
 ENTRYPOINT ["java","-jar","employee-service.jar"]
