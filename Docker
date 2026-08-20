@@ -5,12 +5,11 @@ WORKDIR /spring-boot-app
 
 COPY pom.xml .
 COPY src .
-COPY target .
 
 RUN mvn clean package 
 
 # Runtime Stage
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:25-jre
 
 WORKDIR /spring-boot-app
 
