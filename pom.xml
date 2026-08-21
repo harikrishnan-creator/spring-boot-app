@@ -13,6 +13,8 @@
 
     <properties>
         <java.version>25</java.version>
+        <sonar.projectKey>springboot-app</sonar.projectKey>
+        <sonar.host.url>http://3.18.194.203:9000</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -28,6 +30,25 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.12</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
         </plugins>
     </build>
     <distributionManagement>
