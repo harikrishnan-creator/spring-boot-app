@@ -206,28 +206,6 @@ rm -rf target
 11. Upload artifacts to S3
 12. Cleanup target folder
 
----
-
-### Workflow 2: Deploy to JFrog Artifactory
-**File:** `.github/workflows/Build and Deploy to JFrog + ECR.yaml`
-
-**Trigger:** Manual workflow dispatch
-
-**Runner:** Self-hosted runner
-
-**Key Steps:**
-1. Checkout code
-2. Setup JDK 25
-3. Build with Maven & Deploy to JFrog Artifactory
-
-**Credentials:**
-- JFROG_USERNAME
-- JFROG_PASSWORD
-
-**JFrog Details:**
-- **Server URL:** `http://3.18.194.203:8082/artifactory`
-- **Release Repository:** `libs-release`
-- **Snapshot Repository:** `libs-snapshot`
 
 ---
 
