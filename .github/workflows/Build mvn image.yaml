@@ -28,6 +28,21 @@ jobs:
       - name: Maven Build & Test
         run: mvn clean package
 
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
+            -Dsonar.token=$SONAR_TOKEN
+
+            
+      - name: Quality Gate Check
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        timeout-minutes: 10
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}  
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -59,20 +74,7 @@ jobs:
       - name: Cleanup Target Folder     
         run: |
           rm -rf target 
-
-      - name: Replace Image in Manifest
-        run: |
-          IMAGE_URI=675344694125.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
-
-          sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_URI|g" kubernetes-manifest.yaml
-
-      - name: Deploy to EKS
-        run: |
-          kubectl apply -f kubernetes-manifest.yaml
-
-      - name: Verify Deployment
-        run: |
-          kubectl rollout status deployment/springboot-app   
+ 
 
           
          
