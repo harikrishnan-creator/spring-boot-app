@@ -6,11 +6,12 @@ on:
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: employee-app
-  EKS_CLUSTER_NAME: employee-eks
+  EKS_CLUSTER: employee-eks
+  NAMESPACE: default
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     permissions:
       id-token: write
@@ -26,9 +27,6 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
 
-      - name: Maven Build & Test
-        run: mvn clean package
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -39,31 +37,43 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build Docker Image
-        run: |
-          docker build -t $ECR_REPOSITORY:${{ github.sha }} -f Docker .
 
-      - name: Tag Docker Image
+      - name: Pull Docker Image to ECR
         run: |
-          docker tag $ECR_REPOSITORY:${{ github.sha }} \
-          ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+          docker pull \
+          ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
 
-      - name: Push Docker Image to ECR
-        run: |
-          docker push \
-          ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+      - name: Scan Image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 675344694125.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+          format: table
+          exit-code: 1
+          ignore-unfixed: true
+          severity: CRITICAL,HIGH
 
+          
       - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig \
           --region $AWS_REGION \
-          --name $EKS_CLUSTER_NAME
+          --name $EKS_CLUSTER          
 
-      - name: Update Image in Deployment
+      - name: Replace Image in Manifest
         run: |
-          kubectl set image deployment/employee-app \
-          employee-app=${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:${{ github.sha }}
+          IMAGE_URI=675344694125.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+
+          sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_URI|g" kubernetes-manifest.yaml
+
+      - name: Deploy to EKS
+        run: |
+          kubectl apply -f kubernetes-manifest.yaml
 
       - name: Verify Deployment
         run: |
-          kubectl rollout status deployment/employee-app
+          kubectl rollout status deployment/springboot-app 
+
+      - name: Check Pods health
+        run: |
+          kubectl get pods -n $NAMESPACE
+          kubectl get svc -n $NAMESPACE
