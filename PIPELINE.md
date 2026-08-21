@@ -3,6 +3,11 @@
 ## Overview
 This document explains the complete CI/CD pipeline for the Spring Boot Employee Service application. The pipeline automates the process from development through to deployment on AWS infrastructure.
 
+
+## Application working model
+
+<img width="1536" height="1024" alt="Designer" src="https://github.com/user-attachments/assets/7ad05d46-c53d-4d7e-be7c-afdba3ea28e9" />
+
 ## Pipeline Architecture
 
 ```
@@ -215,8 +220,6 @@ rm -rf target
 |----------|-------|---------|
 | AWS_REGION | us-east-2 | AWS deployment region |
 | ECR_REPOSITORY | employee-app | ECR repository name |
-| SONAR_HOST_URL | http://3.18.194.203:9000 | SonarQube server |
-| SONAR_PROJECT_KEY | springboot-app | SonarQube project identifier |
 | JAVA_VERSION | 25 | Java version for build |
 
 ---
