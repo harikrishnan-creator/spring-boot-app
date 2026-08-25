@@ -231,8 +231,7 @@ Ensure the following GitHub Secrets are configured in your repository:
 1. **AWS_ACCESS_KEY_ID** - AWS access key for ECR push
 2. **AWS_SECRET_ACCESS_KEY** - AWS secret key for ECR push
 3. **SONAR_TOKEN** - SonarQube authentication token
-4. **JFROG_USERNAME** - JFrog Artifactory username
-5. **JFROG_PASSWORD** - JFrog Artifactory password
+
 
 ---
 
@@ -309,12 +308,9 @@ Ensure the following GitHub Secrets are configured in your repository:
         │  Upload to S3 Bucket   │
         │  aws s3 cp ...         │
         └────────┬───────────────┘
-                 │
-                 ▼
-        ┌────────────────────────┐
-        │  Cleanup Artifacts     │
-        │  rm -rf target         │
-        └────────────────────────┘
+
+
+   
 ```
 
 ---
