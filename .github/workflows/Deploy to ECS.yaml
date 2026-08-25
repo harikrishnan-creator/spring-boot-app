@@ -85,7 +85,7 @@ jobs:
           aws ecs create-service \
             --cluster "$ECS_CLUSTER" \
             --service-name "$ECS_SERVICE" \
-            --task-definition "$(jq -r '.family' "$ECS_TASK_DEFINITION")" \
+            --task-definition "$ECS_TASK_DEFINITION" \
             --desired-count 1 \
             --launch-type FARGATE \
             --network-configuration "awsvpcConfiguration={subnets=[${{ env.SUBNETS }}],securityGroups=[${{ env.SECURITY_GROUP }}],assignPublicIp=ENABLED}" \
