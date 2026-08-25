@@ -33,12 +33,12 @@ on:
 
 env:
   AWS_REGION: us-east-2                               # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: harikrishnan/my-devops-repo         # set this to your Amazon ECR repository name
-  ECS_SERVICE: gha-node-app                           # set this to your Amazon ECS service name
+  ECR_REPOSITORY: harikrishnan/employee-app         # set this to your Amazon ECR repository name
+  ECS_SERVICE: spring-boot-app                           # set this to your Amazon ECS service name
   ECS_CLUSTER: My-DEVOPS-Cluster                      # set this to your Amazon ECS cluster name
   ECS_TASK_DEFINITION: task-definition.json           # set this to the path to your Amazon ECS task definition
                                                       # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: gha-node-app
+  CONTAINER_NAME: spring-boot-app
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
   SUBNETS: subnet-0ae4c8dd3afdfcf2f,subnet-0a889ecc0a7248cc6  
   SECURITY_GROUP: sg-0cf539d1bcf5b46d9                # set this to the name of the container in the
@@ -50,8 +50,8 @@ permissions:
 jobs:
   deploy:
     name: Deploy
-    runs-on: [self-hosted]
-    environment: production
+    runs-on: ubuntu-latest
+#    environment: production
 
     steps:
     - name: Checkout
@@ -64,31 +64,6 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        # Build a docker container and
-        # push it to ECR so that it can
-        # be deployed to ECS.
-        #       docker build . --file dockop --tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker build . --file dockop --tag $ECR_REGISTRY/$ECR_REPOSITORY:latest
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
-
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
 
     - name: Check or Create ECS Service
       shell: bash
@@ -120,7 +95,7 @@ jobs:
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        task-definition: ${{env.ECS_TASK_DEFINITION}}
         service: ${{ env.ECS_SERVICE }}
         cluster: ${{ env.ECS_CLUSTER }}
         wait-for-service-stability: true
