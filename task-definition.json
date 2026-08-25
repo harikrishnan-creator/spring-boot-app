@@ -52,5 +52,5 @@
     "memory": "1024",
     "registeredAt": "2026-08-25T14:55:26.098Z",
     "registeredBy": "arn:aws:iam::675344694125:root",
-    "tags": [spring-boot-app]
+    "tags": []
 }
