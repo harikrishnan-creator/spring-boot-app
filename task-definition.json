@@ -1,0 +1,56 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-2:675344694125:task-definition/nodeapp-task:11",
+    "containerDefinitions": [
+        {
+            "name": "gha-node-app",
+            "image": "675344694125.dkr.ecr.us-east-2.amazonaws.com/harikrishnan/employee-app:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 3006,
+                    "hostPort": 3006,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "systemControls": []
+        }
+    ],
+    "family": "nodeapp-task",
+    "executionRoleArn": "arn:aws:iam::675344694125:role/ecs-task-role-for-jenkins",
+    "networkMode": "awsvpc",
+    "revision": 4,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE",
+        "MANAGED_INSTANCES"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "1024",
+    "registeredAt": "2026-08-25T14:55:26.098Z",
+    "registeredBy": "arn:aws:iam::675344694125:root",
+    "tags": [spring-boot-app]
+}
