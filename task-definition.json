@@ -3,7 +3,7 @@
     "containerDefinitions": [
         {
             "name": "spring-boot-app",
-            "image": "675344694125.dkr.ecr.us-east-2.amazonaws.com/harikrishnan/employee-app:latest",
+            "image": "675344694125.dkr.ecr.us-east-2.amazonaws.com/employee-app:latest",
             "cpu": 0,
             "portMappings": [
                 {
