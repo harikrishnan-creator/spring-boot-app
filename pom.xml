@@ -14,6 +14,7 @@
     <properties>
         <java.version>25</java.version>
         <sonar.projectKey>springboot-app</sonar.projectKey>
+        <sonar.organization>Harikrishnan K</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
