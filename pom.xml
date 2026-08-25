@@ -14,7 +14,7 @@
     <properties>
         <java.version>25</java.version>
         <sonar.projectKey>springboot-app</sonar.projectKey>
-        <sonar.host.url>http://3.18.194.203:9000</sonar.host.url>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
