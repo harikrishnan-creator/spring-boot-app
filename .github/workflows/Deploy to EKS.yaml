@@ -6,7 +6,7 @@ on:
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: employee-app
-  EKS_CLUSTER: employee-eks
+  EKS_CLUSTER: my-eks-cluster
   NAMESPACE: default
 
 jobs:
