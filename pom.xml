@@ -23,6 +23,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+
+        <!-- Update Tomcat -->
+<dependency>
+  <groupId>org.apache.tomcat.embed</groupId>
+  <artifactId>tomcat-embed-core</artifactId>
+  <version>10.1.55</version> <!-- or 11.0.22 -->
+</dependency>
+
+<!-- Update Jackson -->
+<dependency>
+  <groupId>com.fasterxml.jackson.core</groupId>
+  <artifactId>jackson-databind</artifactId>
+  <version>2.21.4</version>
+</dependency>
     </dependencies>
 
     <build>
