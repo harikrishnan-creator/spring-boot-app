@@ -110,4 +110,4 @@ spec:
           service:
             name: springboot-app-service
             port:
-              number: 80
+              number: 3006
