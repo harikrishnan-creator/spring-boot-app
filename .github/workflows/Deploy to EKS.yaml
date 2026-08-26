@@ -32,22 +32,19 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-
-      - name: Pull Docker Image to ECR
+      - name: Pull Docker Image from ECR
         run: |
-          docker pull \
-          ${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:latest
+          docker pull ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
 
       - name: Scan Image with Trivy
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 675344694125.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+          image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
           format: table
           exit-code: 1
           ignore-unfixed: true
           severity: CRITICAL,HIGH
 
-          
       - name: Update kubeconfig
         run: |
           aws eks update-kubeconfig \
@@ -56,7 +53,7 @@ jobs:
 
       - name: Replace Image in Manifest
         run: |
-          IMAGE_URI=675344694125.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:latest
+          IMAGE_URI=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
 
           sed -i "s|IMAGE_PLACEHOLDER|$IMAGE_URI|g" kubernetes-manifest.yaml
 
