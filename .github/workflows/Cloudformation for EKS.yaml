@@ -173,22 +173,25 @@ jobs:
         run: |
           echo "⏳ Waiting for stack operation to complete..."
           
-          if [ "${{ steps.deploy.outputs.action }}" = "create" ]; then
+          DEPLOY_ACTION="${{ steps.deploy.outputs.action }}"
+          DELETE_ACTION="${{ steps.delete.outputs.action }}"
+          
+          if [ "$DEPLOY_ACTION" = "create" ]; then
             aws cloudformation wait stack-create-complete \
               --stack-name ${{ env.STACK_NAME }} \
               --region ${{ env.AWS_REGION }}
             echo "✅ Stack creation completed successfully"
-          elif [ "${{ steps.deploy.outputs.action }}" = "update" ]; then
+          elif [ "$DEPLOY_ACTION" = "update" ]; then
             aws cloudformation wait stack-update-complete \
               --stack-name ${{ env.STACK_NAME }} \
               --region ${{ env.AWS_REGION }} || echo "⚠️ No updates to be performed"
             echo "✅ Stack update completed"
-          elif [ "${{ steps.delete.outputs.action }}" = "delete" ]; then
+          elif [ "$DELETE_ACTION" = "delete" ]; then
             aws cloudformation wait stack-delete-complete \
               --stack-name ${{ env.STACK_NAME }} \
               --region ${{ env.AWS_REGION }}
             echo "✅ Stack deletion completed successfully"
-          elif [ "${{ steps.delete.outputs.action }}" = "delete-not-found" ]; then
+          elif [ "$DELETE_ACTION" = "delete-not-found" ]; then
             echo "⚠️ Stack deletion skipped - stack not found"
           fi
 
