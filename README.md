@@ -957,21 +957,3 @@ kubectl get pods -n ingress-nginx
 
 ---
 
-## Recent Changes
-
-### 2026-08-26
-- **Commit:** c4fe710b746e5058e0d6543e8d26f4e614b1cfd1
-- **Change:** Updated service port from 80 to 3006
-- **Impact:** Docker EXPOSE directive and documentation updated to reflect new port
-- **Added:** Comprehensive EKS and Kubernetes manifest documentation
-- **Added:** ECS Task Definition documentation for alternative deployment
-- **Added:** Complete deployment comparison (EKS vs ECS)
-- **Author:** Harikrishnan K
-
----
-
-**Last Updated:** 2026-08-26  
-**Repository:** harikrishnan-creator/spring-boot-app  
-**Repository Purpose:** DevOps practice project for AWS cloud deployment  
-**Language Composition:** 57.3% HCL (Infrastructure-as-Code) + 42.7% Java (Application)  
-**Deployment Options:** EKS (Kubernetes), ECS (Fargate), or EC2
